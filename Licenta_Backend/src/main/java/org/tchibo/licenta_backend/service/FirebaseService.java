@@ -63,7 +63,7 @@ public class FirebaseService {
                     .document(ownerEmail)
                     .get()
                     .get()
-                    .get("fcm_tokens");
+                    .get("tokens");
 
             return list;
         } catch (InterruptedException | ExecutionException e) {

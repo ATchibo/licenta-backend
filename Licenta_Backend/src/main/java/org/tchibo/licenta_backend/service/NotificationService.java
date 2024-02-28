@@ -12,6 +12,7 @@ public class NotificationService {
     @Autowired
     private FirebaseService firebaseService;
 
+    // TODO: custom exception
 
     public void sendNotification(NotificationInfo notificationInfo) throws Exception {
         String ownerEmail = firebaseService.getOwnerEmail(notificationInfo.getRaspberryId());
@@ -22,7 +23,7 @@ public class NotificationService {
 
         List<String> ownerFcmTokens = firebaseService.getOwnerFcmTokens(ownerEmail);
 
-        if (ownerFcmTokens.isEmpty()) {
+        if (ownerFcmTokens == null || ownerFcmTokens.isEmpty()) {
             return;
         }
 
