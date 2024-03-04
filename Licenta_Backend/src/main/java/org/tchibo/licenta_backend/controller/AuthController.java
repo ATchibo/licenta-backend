@@ -24,6 +24,8 @@ public class AuthController {
     public ResponseEntity<String> requestQrInfo(@PathVariable String code) {
         String token = authService.generateToken(code);
 
+        authService.createWebSocketSession(token);
+
         return ResponseEntity.ok(token);
     }
 }

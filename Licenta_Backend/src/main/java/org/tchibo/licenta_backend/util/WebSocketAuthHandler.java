@@ -1,44 +1,103 @@
 package org.tchibo.licenta_backend.util;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.HashMap;
+import java.util.Map;
 
+@Component
 public class WebSocketAuthHandler extends TextWebSocketHandler {
 
-    private final Set<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
+    static class SessionEntry {
+        public WebSocketSession firstDeviceSession = null;
+        public WebSocketSession secondDeviceSession = null;
+    }
+    private final Map<String, SessionEntry> availableEntries =
+            new HashMap<String, SessionEntry>();
+
+
+    private String retrieveSessionId(String url) {
+        String[] splitUrl = url.split("/");
+        return splitUrl[6];
+    }
 
     @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws IOException {
-        String receivedMessage = (String) message.getPayload();
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String url = session.getUri().toString();
+        String sessionId = retrieveSessionId(url);
 
-        if (sessions.size() != 2) {
-            return;
+        SessionEntry sessionEntry = availableEntries.get(sessionId);
+        if (sessionEntry != null) {
+            if (sessionEntry.firstDeviceSession == null) {
+                sessionEntry.firstDeviceSession = session;
+            }
+            else if (sessionEntry.secondDeviceSession == null) {
+                sessionEntry.secondDeviceSession = session;
+            }
+            else {
+                session.close(CloseStatus.NORMAL.withReason("Session count exceeded"));
+            }
         }
+        else {
+            session.close(CloseStatus.NORMAL.withReason("Invalid session"));
+        }
+    }
 
-        for (WebSocketSession s : sessions) {
-            if (s != session) {
-                s.sendMessage(new TextMessage("Message from server: " + receivedMessage));
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        String url = session.getUri().toString();
+        String sessionId = retrieveSessionId(url);
+        SessionEntry sessionEntry = availableEntries.get(sessionId);
+        if (sessionEntry != null) {
+            if (sessionEntry.firstDeviceSession == session) {
+                sessionEntry.firstDeviceSession = null;
+            }
+            else if (sessionEntry.secondDeviceSession == session) {
+                sessionEntry.secondDeviceSession = null;
             }
         }
     }
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws IOException {
-        if (sessions.size() == 2) {
-            session.close();
-            return;
-        }
 
-        sessions.add(session);
-    }
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        sessions.remove(session);
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        String url = session.getUri().toString();
+        String sessionId = retrieveSessionId(url);
+        SessionEntry sessionEntry = availableEntries.get(sessionId);
+        if (sessionEntry != null) {
+            WebSocketSession otherSession = (session == sessionEntry.firstDeviceSession) ?
+                    sessionEntry.secondDeviceSession : sessionEntry.firstDeviceSession;
+            if (otherSession != null) {
+                otherSession.sendMessage(message);
+            }
+        }
+    }
+
+    public void endSession(String sessionId) {
+        SessionEntry sessionEntry = availableEntries.get(sessionId);
+        if (sessionEntry != null) {
+            if (sessionEntry.firstDeviceSession != null) {
+                try {
+                    sessionEntry.firstDeviceSession.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if (sessionEntry.secondDeviceSession != null) {
+                try {
+                    sessionEntry.secondDeviceSession.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            availableEntries.remove(sessionId);
+        }
+    }
+
+    public void createSession(String token) {
+        availableEntries.putIfAbsent(token, new SessionEntry());
     }
 }

@@ -3,6 +3,7 @@ package org.tchibo.licenta_backend.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.scheduling.Trigger;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,5 +60,13 @@ public class JwtUtil {
                 .username(code)
                 .password("")
                 .build();
+    }
+
+    public Date getExpirationTime(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
     }
 }
