@@ -17,7 +17,7 @@ import java.util.List;
 @Component
 public class JwtUtil {
     private static final String SECRET = "o ratusca sta pe lac";
-    private static final long EXPIRATION_TIME = 1000 * 10; // 10 seconds
+    private static final long EXPIRATION_TIME = 1000 * 10 * 2; // 10 seconds
 
     public String generateToken(String code) {
         return Jwts.builder()
