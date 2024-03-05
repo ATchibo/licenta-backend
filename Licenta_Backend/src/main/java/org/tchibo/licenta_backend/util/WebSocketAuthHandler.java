@@ -86,6 +86,8 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
 
                     TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
                     otherSession.sendMessage(newMessage);
+                } else {
+                    otherSession.sendMessage(new TextMessage("cucumucu"));
                 }
             }
         }
