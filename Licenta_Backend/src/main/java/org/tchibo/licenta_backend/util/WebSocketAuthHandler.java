@@ -75,19 +75,24 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
             WebSocketSession otherSession = (session == sessionEntry.firstDeviceSession) ?
                     sessionEntry.secondDeviceSession : sessionEntry.firstDeviceSession;
             if (otherSession != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode node = objectMapper.readTree(message.getPayload());
 
-                if (node.get("uid") != null && node.get("email") != null) {
-                    String uid = node.get("uid").asText();
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode node = objectMapper.readTree(message.getPayload());
 
-                    String newToken = FirebaseAuth.getInstance().createCustomToken(uid);
-                    AuthMessage authMessage = new AuthMessage(newToken, node.get("email").asText());
+                    if (node.get("uid") != null && node.get("email") != null) {
+                        String uid = node.get("uid").asText();
 
-                    TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
-                    otherSession.sendMessage(newMessage);
-                } else {
-                    otherSession.sendMessage(new TextMessage("cucumucu"));
+                        String newToken = FirebaseAuth.getInstance().createCustomToken(uid);
+                        AuthMessage authMessage = new AuthMessage(newToken, node.get("email").asText());
+
+                        TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
+                        otherSession.sendMessage(newMessage);
+                    } else {
+                        otherSession.sendMessage(message);
+                    }
+                } catch (Exception e) {
+                    otherSession.sendMessage(message);
                 }
             }
         }
