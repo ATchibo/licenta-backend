@@ -18,10 +18,11 @@ public class FirebaseInitialization {
         FileInputStream serviceAccount =
                 null;
         try {
-            serviceAccount = new FileInputStream("./service_account_key.json");
+//            serviceAccount = new FileInputStream("./service_account_key.json");
 
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setCredentials(GoogleCredentials.getApplicationDefault())
+//                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setProjectId("licenta-8dee0")
                     .build();
 
