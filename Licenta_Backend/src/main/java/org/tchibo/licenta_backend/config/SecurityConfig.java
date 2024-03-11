@@ -34,6 +34,7 @@ public class SecurityConfig {
 //                                .requestMatchers("/login/**").permitAll()
 //                                .anyRequest().authenticated()
                                 .requestMatchers("/api/auth/request-qr-info/**").permitAll()
+                                .requestMatchers("/api/auth/request-login/**").permitAll()
                                 .anyRequest().permitAll()
 //                                .anyRequest().authenticated()
                 )

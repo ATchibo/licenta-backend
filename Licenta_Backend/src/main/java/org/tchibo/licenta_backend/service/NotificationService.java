@@ -2,7 +2,7 @@ package org.tchibo.licenta_backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.tchibo.licenta_backend.domain.NotificationInfo;
+import org.tchibo.licenta_backend.domain.SimpleNotificationInfo;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ public class NotificationService {
 
     // TODO: custom exception
 
-    public void sendNotification(NotificationInfo notificationInfo) throws Exception {
-        String ownerEmail = firebaseService.getOwnerEmail(notificationInfo.getRaspberryId());
+    public void sendNotification(SimpleNotificationInfo simpleNotificationInfo) throws Exception {
+        String ownerEmail = firebaseService.getOwnerEmail(simpleNotificationInfo.getRaspberryId());
 
         if (ownerEmail == null) {
             throw new Exception("Owner not found");
@@ -27,6 +27,6 @@ public class NotificationService {
             return;
         }
 
-        firebaseService.sendNotification(ownerFcmTokens, notificationInfo);
+        firebaseService.sendNotification(ownerFcmTokens, simpleNotificationInfo);
     }
 }

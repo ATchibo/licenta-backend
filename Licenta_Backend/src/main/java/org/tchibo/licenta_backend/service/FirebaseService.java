@@ -5,7 +5,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.stereotype.Service;
-import org.tchibo.licenta_backend.domain.NotificationInfo;
+import org.tchibo.licenta_backend.domain.SimpleNotificationInfo;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -23,10 +23,10 @@ public class FirebaseService {
         this.firebaseMessaging = FirebaseMessaging.getInstance();
     }
 
-    public void sendNotification(List<String> ownerFcmTokens, NotificationInfo notificationInfo) throws Exception {
+    public void sendNotification(List<String> ownerFcmTokens, SimpleNotificationInfo simpleNotificationInfo) throws Exception {
         try {
             for (String token : ownerFcmTokens) {
-                firebaseMessaging.send(notificationInfo.toNotificationMessage(token));
+                firebaseMessaging.send(simpleNotificationInfo.toNotificationMessage(token));
             }
         } catch (Exception e) {
             e.printStackTrace();

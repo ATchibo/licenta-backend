@@ -1,5 +1,6 @@
 package org.tchibo.licenta_backend.domain;
 
+import com.google.api.client.json.Json;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.AllArgsConstructor;
@@ -9,11 +10,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class NotificationInfo {
+public class SimpleNotificationInfo {
 
     private String title;
     private String body;
     private String raspberryId;
+    private Json data;
 
     public Message toNotificationMessage(String token) {
         return Message.builder()
@@ -23,6 +25,7 @@ public class NotificationInfo {
                         .setBody(body)
                         .build()
                 )
+                .putData("data", data.toString())
                 .setToken(token)
                 .build();
     }
