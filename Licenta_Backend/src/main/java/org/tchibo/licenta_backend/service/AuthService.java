@@ -33,6 +33,10 @@ public class AuthService {
         return jwtUtil.generateToken(code);
     }
 
+    public String generateLongLivedToken(String code) {
+        return jwtUtil.generateLongLivedToken(code);
+    }
+
     public boolean validateToken(String token) {
         return jwtUtil.validateToken(token);
     }
