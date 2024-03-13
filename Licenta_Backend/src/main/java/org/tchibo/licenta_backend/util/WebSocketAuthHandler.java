@@ -71,6 +71,9 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
         String url = session.getUri().toString();
         String sessionId = retrieveSessionId(url);
         SessionEntry sessionEntry = availableEntries.get(sessionId);
+
+        System.out.println("Received message: " + message.getPayload());
+
         if (sessionEntry != null) {
             WebSocketSession otherSession = (session == sessionEntry.firstDeviceSession) ?
                     sessionEntry.secondDeviceSession : sessionEntry.firstDeviceSession;
@@ -87,6 +90,9 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                         AuthMessage authMessage = new AuthMessage(newToken, node.get("email").asText());
 
                         TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
+
+                        System.out.println("Sending token message: " + newMessage.getPayload());
+
                         otherSession.sendMessage(newMessage);
                     } else {
                         otherSession.sendMessage(message);
