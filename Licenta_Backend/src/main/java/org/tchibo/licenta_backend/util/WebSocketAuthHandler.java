@@ -25,8 +25,10 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
 
 
     private String retrieveSessionId(String url) {
+        System.out.println("Retrieving session id from url: " + url);
+
         String[] splitUrl = url.split("/");
-        return splitUrl[6];
+        return splitUrl[splitUrl.length - 1];
     }
 
     @Override
