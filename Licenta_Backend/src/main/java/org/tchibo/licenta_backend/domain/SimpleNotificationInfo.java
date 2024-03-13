@@ -25,6 +25,8 @@ public class SimpleNotificationInfo {
                         .build()
                 )
                 .putData("data", data)
+                .putData("title", title)
+                .putData("body", body)
                 .setToken(token)
                 .build();
     }
