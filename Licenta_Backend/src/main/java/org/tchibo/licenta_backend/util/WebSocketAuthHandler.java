@@ -104,7 +104,7 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                         otherSession.sendMessage(message);
                     }
                 } catch (Exception e) {
-                    otherSession.sendMessage(message);
+                    otherSession.sendMessage(new TextMessage("Invalid message"));
                 }
             }
         }
