@@ -3,6 +3,7 @@ package org.tchibo.licenta_backend.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserRecord;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -82,9 +83,10 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                     ObjectMapper objectMapper = new ObjectMapper();
                     JsonNode node = objectMapper.readTree(message.getPayload());
 
-//                    if (node.get("uid") != null && node.get("email") != null) {
-//                        String uid = node.get("uid").asText();
-                    if (node.get("email") != null) {
+                    if (node.get("uid") != null && node.get("email") != null) {
+                        UserRecord userRecord = FirebaseAuth.getInstance().getUser(node.get("uid").asText());
+                        assert userRecord.getEmail().equals(node.get("email").asText());
+
                         String uid = UUID.randomUUID().toString();
 
                         String newToken = FirebaseAuth.getInstance().createCustomToken(uid);
@@ -93,10 +95,10 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                         TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
                         otherSession.sendMessage(newMessage);
                     } else {
-                        otherSession.sendMessage(message);
+                        otherSession.sendMessage(new TextMessage("Invalid message"));
                     }
                 } catch (Exception e) {
-                    otherSession.sendMessage(message);
+                    otherSession.sendMessage(new TextMessage("Invalid message"));
                 }
             }
         }
