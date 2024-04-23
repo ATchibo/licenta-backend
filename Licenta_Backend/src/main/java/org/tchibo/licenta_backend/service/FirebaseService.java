@@ -25,7 +25,7 @@ public class FirebaseService {
 
     public void sendNotification(List<String> ownerFcmTokens, SimpleNotificationInfo simpleNotificationInfo) throws Exception {
         try {
-            for (String token : ownerFcmTokens) {
+            for (String token: ownerFcmTokens) {
                 firebaseMessaging.send(simpleNotificationInfo.toNotificationMessage(token));
             }
         } catch (Exception e) {

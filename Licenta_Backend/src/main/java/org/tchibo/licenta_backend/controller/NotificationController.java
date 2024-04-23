@@ -23,7 +23,7 @@ public class NotificationController {
             return "Notification sent";
         } catch (Exception e) {
               e.printStackTrace();
-              return "Error sending notification: " + e.getMessage();
+              return "Exception thrown when trying to send notification: " + e.getMessage();
         }
     }
 }
