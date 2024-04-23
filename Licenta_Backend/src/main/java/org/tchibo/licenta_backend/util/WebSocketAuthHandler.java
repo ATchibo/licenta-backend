@@ -85,7 +85,13 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
 
                     if (node.get("uid") != null && node.get("email") != null) {
                         UserRecord userRecord = FirebaseAuth.getInstance().getUser(node.get("uid").asText());
-                        assert userRecord.getEmail().equals(node.get("email").asText());
+
+                        try {
+                            assert userRecord.getEmail().equals(node.get("email").asText());
+                        } catch (Exception e) {
+                            otherSession.sendMessage(new TextMessage("Invalid message"));
+                            return;
+                        }
 
                         String uid = UUID.randomUUID().toString();
 
@@ -95,10 +101,10 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                         TextMessage newMessage = new TextMessage(objectMapper.writeValueAsString(authMessage));
                         otherSession.sendMessage(newMessage);
                     } else {
-                        otherSession.sendMessage(new TextMessage("Invalid message"));
+                        otherSession.sendMessage(message);
                     }
                 } catch (Exception e) {
-                    otherSession.sendMessage(new TextMessage("Invalid message"));
+                    otherSession.sendMessage(message);
                 }
             }
         }
