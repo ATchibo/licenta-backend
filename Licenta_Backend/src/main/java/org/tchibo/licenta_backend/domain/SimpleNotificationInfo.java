@@ -9,11 +9,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class NotificationInfo {
+public class SimpleNotificationInfo {
 
     private String title;
     private String body;
     private String raspberryId;
+    private String data;
 
     public Message toNotificationMessage(String token) {
         return Message.builder()
@@ -23,6 +24,9 @@ public class NotificationInfo {
                         .setBody(body)
                         .build()
                 )
+                .putData("data", data)
+                .putData("title", title)
+                .putData("body", body)
                 .setToken(token)
                 .build();
     }

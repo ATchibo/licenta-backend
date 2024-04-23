@@ -17,7 +17,8 @@ import java.util.List;
 @Component
 public class JwtUtil {
     private static final String SECRET = "o ratusca sta pe lac";
-    private static final long EXPIRATION_TIME = 1000 * 10; // 10 seconds
+    private static final long EXPIRATION_TIME = 1000 * 10 * 2; // 10 seconds
+    private static final long EXPIRATION_TIME_LONG = 1000 * 60 * 60 * 24; // 1 day
 
     public String generateToken(String code) {
         return Jwts.builder()
@@ -68,5 +69,13 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
+    }
+
+    public String generateLongLivedToken(String code) {
+        return Jwts.builder()
+                .setSubject(code)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_LONG))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
     }
 }

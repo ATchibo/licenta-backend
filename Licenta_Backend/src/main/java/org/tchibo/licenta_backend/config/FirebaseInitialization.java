@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
@@ -15,13 +16,10 @@ public class FirebaseInitialization {
 
     @PostConstruct
     public void initializeFirebase() {
-        FileInputStream serviceAccount =
-                null;
+        ClassPathResource serviceAccount = new ClassPathResource("service_account_key.json");
         try {
-            serviceAccount = new FileInputStream("./service_account_key.json");
-
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()))
                     .setProjectId("licenta-8dee0")
                     .build();
 

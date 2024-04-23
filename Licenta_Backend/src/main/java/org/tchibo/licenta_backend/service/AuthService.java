@@ -11,6 +11,7 @@ import org.tchibo.licenta_backend.util.JwtUtil;
 import org.tchibo.licenta_backend.util.WebSocketAuthHandler;
 
 import java.time.Instant;
+import java.util.Date;
 
 @Service
 public class AuthService {
@@ -32,8 +33,16 @@ public class AuthService {
         return jwtUtil.generateToken(code);
     }
 
+    public String generateLongLivedToken(String code) {
+        return jwtUtil.generateLongLivedToken(code);
+    }
+
     public boolean validateToken(String token) {
         return jwtUtil.validateToken(token);
+    }
+
+    public long getExpirationTime(String token) {
+        return jwtUtil.getExpirationTime(token).getTime();
     }
 
     public void createWebSocketSession(String token) {
