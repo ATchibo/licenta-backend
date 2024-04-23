@@ -28,15 +28,9 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-//                                .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
-//                                .requestMatchers("/admin/**").hasAnyRole("ADMIN")
-//                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-//                                .requestMatchers("/login/**").permitAll()
-//                                .anyRequest().authenticated()
                                 .requestMatchers("/api/auth/request-qr-info/**").permitAll()
                                 .requestMatchers("/api/auth/request-login/**").permitAll()
                                 .anyRequest().permitAll()
-//                                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

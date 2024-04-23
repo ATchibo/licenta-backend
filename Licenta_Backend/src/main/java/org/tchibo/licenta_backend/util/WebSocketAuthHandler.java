@@ -12,6 +12,7 @@ import org.tchibo.licenta_backend.domain.AuthMessage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class WebSocketAuthHandler extends TextWebSocketHandler {
@@ -81,8 +82,10 @@ public class WebSocketAuthHandler extends TextWebSocketHandler {
                     ObjectMapper objectMapper = new ObjectMapper();
                     JsonNode node = objectMapper.readTree(message.getPayload());
 
-                    if (node.get("uid") != null && node.get("email") != null) {
-                        String uid = node.get("uid").asText();
+//                    if (node.get("uid") != null && node.get("email") != null) {
+//                        String uid = node.get("uid").asText();
+                    if (node.get("email") != null) {
+                        String uid = UUID.randomUUID().toString();
 
                         String newToken = FirebaseAuth.getInstance().createCustomToken(uid);
                         AuthMessage authMessage = new AuthMessage(newToken, node.get("email").asText());
