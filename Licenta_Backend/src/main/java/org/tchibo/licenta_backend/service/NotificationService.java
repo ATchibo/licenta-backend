@@ -12,8 +12,6 @@ public class NotificationService {
     @Autowired
     private FirebaseService firebaseService;
 
-    // TODO: custom exception
-
     public void sendNotification(SimpleNotificationInfo simpleNotificationInfo) throws Exception {
         String ownerEmail = firebaseService.getOwnerEmail(simpleNotificationInfo.getRaspberryId());
 
